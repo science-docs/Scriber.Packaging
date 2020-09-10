@@ -32,6 +32,18 @@ namespace Scriber.Packaging.Syntax
                     }
                 }
 
+                var typeAttribute = classDeclaration.AttributeLists.GetAttributeByName(ObjectTypeAttribute);
+                if (typeAttribute != null && trivia != null)
+                {
+                    var summaryElement = trivia.Element("summary");
+
+                    if (summaryElement != null)
+                    {
+                        var summary = summaryElement.StringContent();
+                        classDeclaration = SetDescription(typeAttribute, summary, classDeclaration);
+                    }
+                }
+
                 return base.VisitClassDeclaration(classDeclaration);
             }
 
@@ -66,6 +78,25 @@ namespace Scriber.Packaging.Syntax
                 }
                 
                 return base.VisitMethodDeclaration(methodDeclaration);
+            }
+
+            public override SyntaxNode? VisitPropertyDeclaration(PropertyDeclarationSyntax propertyDeclaration)
+            {
+                var attribute = propertyDeclaration.AttributeLists.GetAttributeByName(ObjectFieldAttribute);
+                var trivia = propertyDeclaration.GetTrivia();
+
+                if (attribute != null && trivia != null)
+                {
+                    var summaryElement = trivia.Element("summary");
+
+                    if (summaryElement != null)
+                    {
+                        var summary = summaryElement.StringContent();
+                        propertyDeclaration = SetDescription(attribute, summary, propertyDeclaration);
+                    }
+                }
+
+                return base.VisitPropertyDeclaration(propertyDeclaration);
             }
 
             private ParameterSyntax SetArgumentDescription(ParameterSyntax parameter, string value)

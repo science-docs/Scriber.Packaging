@@ -28,7 +28,7 @@ namespace Scriber.Packaging
 
             if (SetMsBuildExePath())
             {
-                var csproj = Directory.GetFiles(directory, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+                var csproj = config.Build?.ProjectFile ?? Directory.GetFiles(directory, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
                 if (csproj != null)
                 {

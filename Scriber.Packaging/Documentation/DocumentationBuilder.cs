@@ -37,7 +37,7 @@ namespace Scriber.Packaging.Documentation
 
                 if (packageAttribute != null)
                 {
-                    var name = (string)packageAttribute.Name ?? type.Name;
+                    var name = (string)packageAttribute.Name ?? type.FormattedName();
                     var description = (string)packageAttribute.Description;
                     var package = new Package
                     {
@@ -59,7 +59,25 @@ namespace Scriber.Packaging.Documentation
                     }
                 }
 
-                
+                var typeAttribute = Utility.GetAttribute(type, EngineNamespace + ObjectTypeAttribute + "Attribute");
+
+                if (typeAttribute != null)
+                {
+                    var name = (string)typeAttribute.Name ?? type.FormattedName();
+                    var description = (string)typeAttribute.Description;
+                    var objectType = new ObjectType
+                    {
+                        Name = name,
+                        Description = description
+                    };
+                    
+                    elementMap.Add(name, objectType);
+
+                    foreach (var property in type.GetProperties())
+                    {
+                        VisitObjectFieldProperty(objectType, property);
+                    }
+                }
             }
 
             public void VisitPackageMethod(Package package, MethodInfo method)
@@ -147,7 +165,17 @@ namespace Scriber.Packaging.Documentation
 
             public void VisitObjectFieldProperty(ObjectType type, PropertyInfo property)
             {
+                var objectFieldAttribute = Utility.GetAttribute(property, EngineNamespace + ObjectFieldAttribute + "Attribute");
 
+                var name = (string?)objectFieldAttribute?.Name ?? property.Name;
+                var description = (string?)objectFieldAttribute?.Description;
+                var objectField = new ObjectField
+                {
+                    Name = name,
+                    Description = description
+                };
+
+                type.Fields.Add(objectField);
             }
         }
     }

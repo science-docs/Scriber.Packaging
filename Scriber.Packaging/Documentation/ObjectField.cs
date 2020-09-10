@@ -1,14 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Scriber.Packaging.Documentation
 {
     public class ObjectField : DocumentationElement
     {
+        public Type? Type { get; set; }
+
         public override string ToMarkdown()
         {
-            throw new NotImplementedException();
+            var sb = new StringBuilder();
+
+            sb.Append('`').Append(Name).Append("` ").AppendLine(Type!.FormattedName()).AppendLine();
+
+            if (Description != null)
+            {
+                sb.AppendLine(MarkdownUtility.XmlToMarkdown(Description)).AppendLine();
+            }
+
+            return sb.ToString();
         }
     }
 }
